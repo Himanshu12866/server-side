@@ -129,9 +129,11 @@ app.get("/products/:id" , (req,res) => {
 			document => {
 			if(document.length === 0){
 				res.send("<h1>404 Products Not Found</h1>")
+				res.end()
 			}
 			else{
 				res.send(document)
+				res.status("404 Sorry not found")
 				res.end()
 			}
 			}
