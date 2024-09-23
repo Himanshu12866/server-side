@@ -40,3 +40,44 @@
 // })
 // app.listen(4500)
 // console.log(`Server started at .... "http://127.0.0.1:4500`)
+
+
+// var mongoClient = require("mongodb").MongoClient;
+// var http = require("http")
+// var url = "mongodb://localhost:27017/";
+// var app = http.createServer((req, res) => {
+// 	res.writeHead(200, {"content-type":"application/json"})
+// 	mongoClient.connect(url)
+// 	.then(clientObj => {
+// 		var db = clientObj.db("admin")
+// 		db.collection("products").find({}).toArray().then(
+// 			document => {
+// 				res.write(JSON.stringify(document));
+// 				res.end()
+// 			}
+// 		)
+// 	})
+// })
+// app.listen(4200)
+// console.log(`Server started at "http://127.0.0.1:4200"`)
+
+var http = require("http")
+var mongoClient = require("mongodb").MongoClient;
+var url = "mongodb://localhost:27017";
+var app = http.createServer((req, res) => {
+	res.writeHead(200, { "content-type": "application/json" })
+	mongoClient.connect(url).
+		then(clientObj => {
+			var db = clientObj.db("newcollection")
+
+			db.collection("newcolletion").find({}).toArray()
+				.then(
+					document => {
+						res.write(JSON.stringify(document));
+						res.end()
+					}
+				)
+		})
+})
+app.listen(5000)
+console.log(`Server started at "http://127.0.0.1:5000"`)
