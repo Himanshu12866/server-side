@@ -120,13 +120,20 @@ app.get("/products/:category" , (req,res) => {
 })
 
 app.get("/products/:id" , (req,res) => {
+	let queryId = req.params.id
+	let ID = parseInt(queryId)
 	mongoClient.connect(url)
 	.then(clientObj => {
 		var db = clientObj.db("admin")
-		db.collection("products").find({"id": req.params.id}).toArray().then(
+		db.collection("products").find({"id": ID}).toArray().then(
 			document => {
+			if(document.length === 0){
+				res.send("<h1>404 Products Not Found</h1>")
+			}
+			else{
 				res.send(document)
 				res.end()
+			}
 			}
 		)
 	})
