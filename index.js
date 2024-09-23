@@ -107,6 +107,17 @@ app.get("/products", (req, res) => {
 			)
 		})
 })
+
+app.get("/products/:electronics" , (req,res) => {
+	mongoClient.connect(url)
+	.then(clientObj => {
+		var db = clientObj.db("admin")
+		db.collection("products").find({"category": req.params.electronics}).toArray().then(document => {
+			res.send(document)
+			res.end()
+		})
+	})
+})
 app.get("*" , (req,res) => {
 	res.send("<h1>404 Error</h1>")
 })
