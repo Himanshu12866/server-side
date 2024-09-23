@@ -108,18 +108,31 @@ app.get("/products", (req, res) => {
 		})
 })
 
-app.get("/products/:electronics" , (req,res) => {
+app.get("/products/:category" , (req,res) => {
 	mongoClient.connect(url)
 	.then(clientObj => {
 		var db = clientObj.db("admin")
-		db.collection("products").find({"category": req.params.electronics}).toArray().then(document => {
+		db.collection("products").find({"category": req.params.category}).toArray().then(document => {
 			res.send(document)
 			res.end()
 		})
 	})
 })
+
+app.get("/products/:id" , (req,res) => {
+	mongoClient.connect(url)
+	.then(clientObj => {
+		var db = clientObj.db("admin")
+		db.collection("products").find({"id": req.params.id}).toArray().then(
+			document => {
+				res.send(document)
+				res.end()
+			}
+		)
+	})
+})
 app.get("*" , (req,res) => {
-	res.send("<h1>404 Error</h1>")
+	res.send("<h1>404 Error Not Found</h1>")
 })
 app.listen(5000)
 console.log(`Server started at "http://127.0.0.1:5000"`)
