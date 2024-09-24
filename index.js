@@ -87,7 +87,12 @@ const express = require('express');
 const mongoClient = require('mongodb').MongoClient;
 const url = 'mongodb://localhost:27017';
 const app = express();
-
+const cors = require('cors');
+app.use(express.urlencoded
+	({ extended: true })
+)
+app.use(express.json())
+app.use(cors())
 
 app.get("/", (req, res) => {
 	res.send("<h1>Welcome to the API home page</h1>")
@@ -107,7 +112,7 @@ app.get("/products", (req, res) => {
 			)
 		})
 })
-app.get("/cat" , (req,res) => {
+app.get("/cat", (req, res) => {
 	mongoClient.connect(url).then(clientObj => {
 		let db = clientObj.db("admin")
 		db.collection("categories").find({}).toArray().then(document => {
@@ -117,26 +122,26 @@ app.get("/cat" , (req,res) => {
 	})
 })
 
-app.get("/products/:category" , (req,res) => {
+app.get("/products/:category", (req, res) => {
 	mongoClient.connect(url)
-	.then(clientObj => {
-		var db = clientObj.db("admin")
-		db.collection("products").find({"category": req.params.category}).toArray().then(document => {
-			res.send(document)
-			res.end()
+		.then(clientObj => {
+			var db = clientObj.db("admin")
+			db.collection("products").find({ "category": req.params.category }).toArray().then(document => {
+				res.send(document)
+				res.end()
+			})
 		})
-	})
 })
 
-app.get("/products/:id" ,async  (req,res) => {
+app.get("/products/:id", async (req, res) => {
 
-	let queryId =parseInt(req.params.id)
-const clientObj =await mongoClient.connect(url)
-const db = clientObj.db("admin")
-const document =await db.collection("products").find({id:queryId}).toArray()
-res.send(document)
-res.end()
-	
+	let queryId = parseInt(req.params.id)
+	const clientObj = await mongoClient.connect(url)
+	const db = clientObj.db("admin")
+	const document = await db.collection("products").find({ id: queryId }).toArray()
+	res.send(document)
+	res.end()
+
 	// mongoClient.connect(url)
 	// .then(clientObj => {
 	// 	var db = clientObj.db("admin")
@@ -155,7 +160,53 @@ res.end()
 	// 	)
 	// })
 })
-app.get("*" , (req,res) => {
+
+app.post("/add-cat", (req, res) => {
+	let category = {
+		catid: parseInt(req.body.catid),
+		category: req.body.category
+	}
+	mongoClient.connect(url).then(clientObj => {
+		const db = clientObj.db("admin")
+		db.collection("categories").insertOne(category).then(() => {
+			res.redirect("/cat")
+			res.end()
+		})
+	})
+})
+
+app.put("/edit-cat/:id", (req, res) => {
+	let cid = parseInt(req.params.id)
+	let category = {
+		category: req.body.category
+	}
+	mongoClient.connect(url)
+		.then(clientObj => {
+			const db = clientObj.db("admin")
+			db.collection("categories").updateOne({ catid: cid }, { $set: category })
+		})
+		.then(() => {
+			console.log("Category Modified")
+			res.redirect("/cat")
+			res.end()
+		}
+		)
+})
+
+app.delete("/delete-cat/:id" , (req,res) => {
+	let cid = parseInt(req.params.id)
+mongoClient.connect(url).then(clientObj => {
+	const db = clientObj.db("admin")
+	db.collection("categories").deleteOne({catid:cid}).then(() => {
+
+		console.log("Item deleted")
+		res.redirect("/cat")
+		res.end()
+	})
+})
+
+})
+app.get("*", (req, res) => {
 	res.send("<h1>404 Error Not Found</h1>")
 })
 app.listen(5000)
