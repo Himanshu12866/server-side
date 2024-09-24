@@ -107,6 +107,15 @@ app.get("/products", (req, res) => {
 			)
 		})
 })
+app.get("/cat" , (req,res) => {
+	mongoClient.connect(url).then(clientObj => {
+		let db = clientObj.db("admin")
+		db.collection("categories").find({}).toArray().then(document => {
+			res.send(document)
+			res.end()
+		})
+	})
+})
 
 app.get("/products/:category" , (req,res) => {
 	mongoClient.connect(url)
@@ -119,25 +128,32 @@ app.get("/products/:category" , (req,res) => {
 	})
 })
 
-app.get("/products/:id" , (req,res) => {
-	let queryId = req.params.id
-	let ID = parseInt(queryId)
-	mongoClient.connect(url)
-	.then(clientObj => {
-		var db = clientObj.db("admin")
-		db.collection("products").find({"id": ID}).toArray().then(
-			document => {
-			if(document.length === 0){
-				res.send("<h1>404 Product Not Found</h1>")
-				res.end()
-			}
-			else{
-				res.send(document)
-				res.end()
-			}
-			}
-		)
-	})
+app.get("/products/:id" ,async  (req,res) => {
+
+	let queryId =parseInt(req.params.id)
+const clientObj =await mongoClient.connect(url)
+const db = clientObj.db("admin")
+const document =await db.collection("products").find({id:queryId}).toArray()
+res.send(document)
+res.end()
+	
+	// mongoClient.connect(url)
+	// .then(clientObj => {
+	// 	var db = clientObj.db("admin")
+	// 	console.log("inner client ")
+	// 	db.collection("products").find({"id": queryId }).toArray().then(
+	// 		document => {
+	// 		if(document.length === 0){
+	// 			res.send("<h1>404 Product Not Found</h1>")
+	// 			res.end()
+	// 		}
+	// 		else{
+	// 			res.send(document)
+	// 			res.end()
+	// 		}
+	// 		}
+	// 	)
+	// })
 })
 app.get("*" , (req,res) => {
 	res.send("<h1>404 Error Not Found</h1>")
