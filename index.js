@@ -1,5 +1,5 @@
 
-// var os = require("os");		// os is 
+// var os = require("os");		// os is
 // 	console.log(os.cpus())
 // 	console.log(os.freemem())
 // 	console.log(os.platform())
