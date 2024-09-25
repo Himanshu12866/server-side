@@ -1,5 +1,5 @@
 
-// var os = require("os");		// os is a mod
+// var os = require("os");		// os is a mo
 // 	console.log(os.cpus())
 // 	console.log(os.freemem())
 // 	console.log(os.platform())
