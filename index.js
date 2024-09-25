@@ -1,5 +1,5 @@
 
-// var os = require("os");		// os is a module 
+// var os = require("os");		// os is a module
 // 	console.log(os.cpus())
 // 	console.log(os.freemem())
 // 	console.log(os.platform())
