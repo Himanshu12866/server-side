@@ -52,5 +52,35 @@ app.post("/add-products", (req, res) => {
         })
     })
 })
+app.put("/edit-products/:id", (req, res) => {
+    let product = {
+        id: parseInt(req.body.id),
+        title: req.body.title,
+        price: parseInt(req.body.price),
+        description: req.body.description,
+        image: req.body.image,
+        rating: {
+            rate: parseInt(req.body.rate),
+            count: parseInt(req.body.count)
+        }
+    }
+    mongoclient.connect(url).then(clientObj => {
+        let db = clientObj.db("admin")
+        db.collection("products").updateOne({ id: parseInt(req.params.id) }, { $set: product }).then(() => {
+            res.redirect("/products")
+            res.end()
+        })
+    })
+})
+app.delete("/delete-product/:id" , (req,res) => {
+    mongoclient.connect(url).then(clientObj => {
+        let cid = parseInt(req.params.id)
+        let db = clientObj.db("admin")
+        db.collection("products").deleteOne({id:cid}).then(() => {
+            res.redirect("/products")
+            res.end()
+        })
+    })
+})
 app.listen(1000)
 console.log("Server started at  http://127.0.0.1:1000")
